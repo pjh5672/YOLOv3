@@ -174,7 +174,7 @@ def main():
             mAP_dict, eval_text = validate(args=args, dataloader=val_loader, model=model, evaluator=evaluator, epoch=epoch)
             ap95 = mAP_dict["all"]["mAP_5095"]
 
-            if ap50 > best_score:
+            if ap95 > best_score:
                 logger.info(eval_text)
                 result_analyis(args=args, mAP_dict=mAP_dict["all"])
                 best_epoch, best_score, best_mAP_str = epoch, ap95, eval_text
