@@ -53,7 +53,7 @@ def build_backbone(pretrained=True):
 if __name__ == "__main__":
     input_size = 320
     device = torch.device('cpu')
-    backbone, feat_dims = build_backbone(pretrained=True)
+    backbone, feat_dims = build_backbone(pretrained=False)
 
     x = torch.randn(1, 3, input_size, input_size).to(device)
     ftrs = backbone(x)
