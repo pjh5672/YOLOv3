@@ -97,7 +97,7 @@ python val.py --exp_name my_test --data voc.yaml --ckpt_name best.pt
 
 
 ```log
-2022-11-16 13:45:37 | YOLOv2 Architecture Info - Params(M): 50.67, FLOPS(B): 29.49
+2022-11-16 13:45:37 | YOLOv3 Architecture Info - Params(M): 61.55, FLOPS(B): 65.60
 2022-11-16 13:48:09 | [Train-Epoch:001] multipart: 308.6470  obj: 1.8051  noobj: 380.8712  txty: 0.8276  twth: 20.2762  cls: 10.8872  
 2022-11-09 18:01:53 | 
 	 - Average Precision (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.121
