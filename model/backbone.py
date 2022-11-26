@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[0]
 
 
 class Darknet53(nn.Module):
-    def __init__(self, ):
+    def __init__(self):
         super().__init__()
         self.conv1 = Conv(3, 32, kernel_size=3, padding=1)
         self.res_block1 = self.build_conv_and_resblock(in_channels=32, out_channels=64, num_blocks=1)

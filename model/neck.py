@@ -27,11 +27,11 @@ class TopDownLayer(nn.Module):
 class FPN(nn.Module):
     def __init__(self, feat_dims):
         super().__init__()
-        self.topdown1 = TopDownLayer(in_channels=feat_dims[-1], out_channels=feat_dims[-1]//2)
-        self.conv1 = Conv(feat_dims[-1]//2, feat_dims[-1]//4, kernel_size=1, stride=1, padding=0)
-        self.topdown2 = TopDownLayer(in_channels=feat_dims[-2]+feat_dims[-1]//4, out_channels=feat_dims[-2]//2)
-        self.conv2 = Conv(feat_dims[-2]//2, feat_dims[-2]//4, kernel_size=1, stride=1, padding=0)
-        self.topdown3 = TopDownLayer(in_channels=feat_dims[-3]+feat_dims[-2]//4, out_channels=feat_dims[-3]//2)
+        self.topdown1 = TopDownLayer(in_channels=feat_dims[2], out_channels=feat_dims[2]//2)
+        self.conv1 = Conv(feat_dims[2]//2, feat_dims[2]//4, kernel_size=1, stride=1, padding=0)
+        self.topdown2 = TopDownLayer(in_channels=feat_dims[1]+feat_dims[2]//4, out_channels=feat_dims[-2]//2)
+        self.conv2 = Conv(feat_dims[1]//2, feat_dims[1]//4, kernel_size=1, stride=1, padding=0)
+        self.topdown3 = TopDownLayer(in_channels=feat_dims[0]+feat_dims[1]//4, out_channels=feat_dims[-3]//2)
         self.upsample = nn.Upsample(scale_factor=2)
 
     def forward(self, x):
@@ -51,6 +51,7 @@ if __name__ == "__main__":
     input_size = 320
     device = torch.device('cpu')
     backbone, feat_dims = build_backbone(pretrained=False)
+    print(feat_dims)
     neck = FPN(feat_dims=feat_dims)
 
     x = torch.randn(1, 3, input_size, input_size).to(device)
