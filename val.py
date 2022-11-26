@@ -83,13 +83,13 @@ def validate(args, dataloader, model, evaluator, epoch=0, save_result=False):
 def result_analyis(args, mAP_dict):
     analysis_result = analyse_mAP_info(mAP_dict, args.class_list)
     data_df, figure_AP, figure_dets, fig_PR_curves = analysis_result
-    data_df.to_csv(str(args.exp_path / f'result_AP.csv'))
-    figure_AP.savefig(str(args.exp_path / f'figure_AP.jpg'))
-    figure_dets.savefig(str(args.exp_path / f'figure_dets.jpg'))
-    PR_curve_dir = args.exp_path / 'PR_curve' 
+    data_df.to_csv(str(args.exp_path / "result_AP.csv"))
+    figure_AP.savefig(str(args.exp_path / "figure_AP.jpg"))
+    figure_dets.savefig(str(args.exp_path / "figure_dets.jpg"))
+    PR_curve_dir = args.exp_path / "PR_curve"
     os.makedirs(PR_curve_dir, exist_ok=True)
     for class_id in fig_PR_curves.keys():
-        fig_PR_curves[class_id].savefig(str(PR_curve_dir / f'{args.class_list[class_id]}.jpg'))
+        fig_PR_curves[class_id].savefig(str(PR_curve_dir / f"{args.class_list[class_id]}.jpg"))
         fig_PR_curves[class_id].clf()
 
 
@@ -108,9 +108,9 @@ def parse_args(make_dirs=True):
     parser.add_argument("--workers", type=int, default=8, help="Number of workers used in dataloader")
     args = parser.parse_args()
     args.data = ROOT / "data" / args.data
-    args.exp_path = ROOT / 'experiment' / args.exp
-    args.ckpt_path = args.exp_path / 'weight' / args.ckpt_name
-    args.img_log_dir = args.exp_path / 'val_image'
+    args.exp_path = ROOT / "experiment" / args.exp
+    args.ckpt_path = args.exp_path / "weight" / args.ckpt_name
+    args.img_log_dir = args.exp_path / "val_image"
     
     if make_dirs:
         os.makedirs(args.img_log_dir, exist_ok=True)
