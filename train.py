@@ -181,7 +181,7 @@ def main():
         if epoch % 10 == 0:
             val_loader = tqdm(val_loader, desc=f"[VAL:{epoch:03d}/{args.num_epochs:03d}]", ncols=115, leave=False)
             mAP_dict, eval_text = validate(args=args, dataloader=val_loader, model=model, evaluator=evaluator, epoch=epoch)
-            ap95 = mAP_dict["all"]["mAP_5095"]
+            ap95 = mAP_dict["all"]["mAP_5095"] 
 
             if ap95 > best_score:
                 logger.info(eval_text)
