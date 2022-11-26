@@ -100,10 +100,10 @@ def parse_args(make_dirs=True):
     parser.add_argument("--workers", type=int, default=8, help="Number of workers used in dataloader")
     args = parser.parse_args()
     args.data = ROOT / "data" / args.data
-    args.exp_path = ROOT / 'experiment' / args.exp
-    args.weight_dir = args.exp_path / 'weight'
-    args.img_log_dir = args.exp_path / 'train_image'
-    args.load_path = args.weight_dir / 'last.pt' if args.resume else None
+    args.exp_path = ROOT / "experiment" / args.exp
+    args.weight_dir = args.exp_path / "weight"
+    args.img_log_dir = args.exp_path / "train_image"
+    args.load_path = args.weight_dir / "last.pt" if args.resume else None
 
     if make_dirs:
         os.makedirs(args.weight_dir, exist_ok=True)
