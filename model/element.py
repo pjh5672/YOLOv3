@@ -21,7 +21,7 @@ class Conv(nn.Module):
         self.conv = nn.Sequential(
             nn.Conv2d(c1, c2, kernel_size=kernel_size, stride=stride, padding=padding, dilation=dilation, groups=groups),
             nn.BatchNorm2d(c2),
-            nn.LeakyReLU(0.1, inplace=True) if act else nn.Identity()
+            nn.LeakyReLU(0.1) if act else nn.Identity()
         )
 
     def forward(self, x):

@@ -19,10 +19,10 @@ class DetectLayer(nn.Module):
         super().__init__()
         self.stride = stride
         self.anchors = anchors
-        self.num_boxes = len(anchors)
+        self.num_anchors = len(anchors)
         self.num_attributes = 1 + 4 + num_classes
         self.conv = Conv(in_channels, in_channels*2, kernel_size=3, padding=1)
-        self.detect = nn.Conv2d(in_channels*2, self.num_attributes*self.num_boxes, kernel_size=1, padding=0)
+        self.detect = nn.Conv2d(in_channels*2, self.num_attributes*self.num_anchors, kernel_size=1, padding=0)
         self.set_grid_xy(input_size=input_size)
 
 
@@ -32,9 +32,9 @@ class DetectLayer(nn.Module):
 
         out = self.conv(x)
         out = self.detect(out)
-        out = out.permute(0, 2, 3, 1).flatten(1, 2).view((bs, -1, self.num_boxes, self.num_attributes))
+        out = out.permute(0, 2, 3, 1).flatten(1, 2).view((bs, -1, self.num_anchors, self.num_attributes))
 
-        pred_obj = out[..., :1]
+        pred_obj = torch.sigmoid(out[..., :1])
         pred_box_txty = torch.sigmoid(out[..., 1:3])
         pred_box_twth = out[..., 3:5]
         pred_cls = out[..., 5:]
@@ -43,7 +43,7 @@ class DetectLayer(nn.Module):
             return torch.cat((pred_obj, pred_box_txty, pred_box_twth, pred_cls), dim=-1)
         else:
             pred_box = self.transform_pred_box(torch.cat((pred_box_txty, pred_box_twth), dim=-1))
-            pred_score = torch.sigmoid(pred_obj) * torch.sigmoid(pred_cls)
+            pred_score = pred_obj * torch.sigmoid(pred_cls)
             pred_score, pred_label = pred_score.max(dim=-1)
             pred_out = torch.cat((pred_score.unsqueeze(-1), pred_box, pred_label.unsqueeze(-1)), dim=-1)
             return pred_out.flatten(1, 2)
@@ -69,17 +69,17 @@ class YoloHead(nn.Module):
     def __init__(self, input_size, in_channels, num_classes, anchors):
         super().__init__()
         anchors = torch.tensor(anchors) if not torch.is_tensor(anchors) else anchors
-        self.detect_l = DetectLayer(input_size=input_size, in_channels=in_channels[2]//2, num_classes=num_classes, anchors=anchors[6:9], stride=32)
-        self.detect_m = DetectLayer(input_size=input_size, in_channels=in_channels[1]//2, num_classes=num_classes, anchors=anchors[3:6], stride=16)
         self.detect_s = DetectLayer(input_size=input_size, in_channels=in_channels[0]//2, num_classes=num_classes, anchors=anchors[0:3], stride=8)
+        self.detect_m = DetectLayer(input_size=input_size, in_channels=in_channels[1]//2, num_classes=num_classes, anchors=anchors[3:6], stride=16)
+        self.detect_l = DetectLayer(input_size=input_size, in_channels=in_channels[2]//2, num_classes=num_classes, anchors=anchors[6:9], stride=32)
 
 
     def forward(self, x):
         C1, C2, C3 = x
-        pred_l = self.detect_l(C1)
-        pred_m = self.detect_m(C2)
         pred_s = self.detect_s(C3)
-        return pred_l, pred_m, pred_s
+        pred_m = self.detect_m(C2)
+        pred_l = self.detect_l(C1)
+        return pred_s, pred_m, pred_l
 
 
 

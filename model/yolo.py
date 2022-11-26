@@ -29,18 +29,22 @@ class YoloModel(nn.Module):
     def forward(self, x):
         ftrs = self.backbone(x)
         ftrs = self.neck(ftrs)
-        pred_l, pred_m, pred_s = self.head(ftrs)
-        return pred_l, pred_m, pred_s
+        preds = self.head(ftrs)
+        if self.training:
+            return preds
+        else:
+            return torch.cat(preds, dim=1)
 
 
     def set_grid_xy(self, input_size):
-        self.head.detect_l.set_grid_xy(input_size=input_size)
-        self.head.detect_m.set_grid_xy(input_size=input_size)
         self.head.detect_s.set_grid_xy(input_size=input_size)
-
+        self.head.detect_m.set_grid_xy(input_size=input_size)
+        self.head.detect_l.set_grid_xy(input_size=input_size)
+        
 
 
 if __name__ == "__main__":
+    input_size = 320
     num_classes = 1
     device = torch.device('cuda')
     anchors = [[0.248,      0.7237237 ],
@@ -53,7 +57,6 @@ if __name__ == "__main__":
                 [0.8605263,  0.8736842 ],
                 [0.944,      0.5733333 ]]
 
-    input_size = 320
     model = YoloModel(input_size=input_size, num_classes=num_classes, anchors=anchors).to(device)
 
     model.train()
@@ -63,8 +66,7 @@ if __name__ == "__main__":
 
     model.eval()
     preds = model(torch.randn(1, 3, input_size, input_size).to(device))
-    for pred in preds:
-        print(pred.shape)
+    print(preds.shape)
 
     input_size = 416
     model.set_grid_xy(input_size=input_size)
@@ -76,5 +78,4 @@ if __name__ == "__main__":
     
     model.eval()
     preds = model(torch.randn(1, 3, input_size, input_size).to(device))
-    for pred in preds:
-        print(pred.shape)
+    print(preds.shape)
