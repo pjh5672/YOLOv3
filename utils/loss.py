@@ -23,7 +23,7 @@ class YoloLoss():
         self.num_anchors_per_scale = len(anchors) // num_scales
         self.obj_loss_func = nn.MSELoss(reduction='none')
         self.box_loss_func = nn.MSELoss(reduction='none')
-        self.cls_loss_func = nn.BCEWithLogitsLoss(reduction='none')
+        self.cls_loss_func = nn.CrossEntropyLoss(reduction='none')
         self.set_grid_xy(input_size=input_size)
 
 
@@ -45,13 +45,13 @@ class YoloLoss():
             pred_obj = prediction[..., 0]
             pred_box_txty = prediction[..., 1:3]
             pred_box_twth = prediction[..., 3:5]
-            pred_cls = prediction[..., 5:]
+            pred_cls = prediction[..., 5:].permute(0, 3, 1, 2)
 
             target_obj = (target[..., 0] == 1).float()
             target_noobj = (target[..., 0] == 0).float()
             target_box_txty = target[..., 1:3]
             target_box_twth = target[..., 3:5]
-            target_cls = target[..., 5:]
+            target_cls = target[..., 5].long()
 
             obj_loss_per_scale = self.obj_loss_func(pred_obj, iou_pred_with_target) * target_obj
             obj_loss += obj_loss_per_scale.sum() / self.bs
@@ -65,7 +65,7 @@ class YoloLoss():
             twth_loss_per_scale = self.box_loss_func(pred_box_twth, target_box_twth).sum(dim=-1) * target_obj
             twth_loss += twth_loss_per_scale.sum() / self.bs
             
-            cls_loss_per_scale = self.cls_loss_func(pred_cls, target_cls).sum(dim=-1) * target_obj
+            cls_loss_per_scale = self.cls_loss_func(pred_cls, target_cls) * target_obj
             cls_loss += cls_loss_per_scale.sum() / self.bs
         
         multipart_loss = self.lambda_obj * obj_loss + noobj_loss + (txty_loss + twth_loss) + cls_loss
@@ -117,7 +117,7 @@ class YoloLoss():
 
                         targets[scale_index][grid_j, grid_i, anchor_index, 0] = 1.0
                         targets[scale_index][grid_j, grid_i, anchor_index, 1:5] = torch.tensor([tx, ty, tw, th])
-                        targets[scale_index][grid_j, grid_i, anchor_index, 5 + cls_id] = 1.0
+                        targets[scale_index][grid_j, grid_i, anchor_index, 5] = cls_id
                     else:
                         if iou > self.iou_threshold:
                             targets[scale_index][grid_j, grid_i, anchor_index, 0] = -1.0
