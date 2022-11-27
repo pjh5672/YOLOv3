@@ -19,7 +19,7 @@ class YoloLoss():
         self.anchors = anchors
         self.num_scales = num_scales
         self.num_classes = num_classes
-        self.num_attributes = 1 + 4 + num_classes
+        self.num_attributes = 1 + 4 + 1
         self.num_anchors_per_scale = len(anchors) // num_scales
         self.obj_loss_func = nn.MSELoss(reduction='none')
         self.box_loss_func = nn.MSELoss(reduction='none')
