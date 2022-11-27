@@ -21,8 +21,9 @@ This is a repository for PyTorch implementation of YOLOv3 following the original
 
 | Model | Dataset | Train | Valid | Size<br><sup>(pixel) | mAP<br><sup>(@0.5:0.95) | mAP<br><sup>(@0.5) | Params<br><sup>(M) | FLOPS<br><sup>(B) |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | 
-| YOLOv3<br><sup>(<u>Paper:page_with_curl:</u>)</br> | COCO | trainval | test-dev | 416 | 31.2 | 55.3 | 61.95 | 65.86 |
-| YOLOv3-416<br><sup>(<u>Our:star:</u>)</br> | PASCAL-VOC | trainval2007+2012 | test2007 | 416 | - | - | 61.55 | 65.60 |
+| YOLOv3<br><sup>(<u>Paper:page_with_curl:</u>)</br> | COCO | train2017 | val2017 | 416 | 31.2 | 55.3 | 61.95 | 65.86 |
+| YOLOv3<br><sup>(<u>Our:star:</u>)</br> | COCO | train2017 | val2017 | 416 | - | - | 61.55 | 65.60 |
+| YOLOv3<br><sup>(<u>Our:star:</u>)</br> | PASCAL-VOC | trainval2007+2012 | test2007 | 416 | - | - | 61.55 | 65.60 |
 
 
  - **Pretrained Model Download**
@@ -97,32 +98,41 @@ python val.py --exp_name my_test --data voc.yaml --ckpt_name best.pt
 
 
 ```log
-2022-11-16 13:45:37 | YOLOv3 Architecture Info - Params(M): 61.55, FLOPS(B): 65.60
-2022-11-16 13:48:09 | [Train-Epoch:001] multipart: 308.6470  obj: 1.8051  noobj: 380.8712  txty: 0.8276  twth: 20.2762  cls: 10.8872  
-2022-11-09 18:01:53 | 
-	 - Average Precision (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.121
-	 - Average Precision (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.336
-	 - Average Precision (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.054
-	 - Average Precision (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.003
-	 - Average Precision (AP) @[ IoU=0.50      | area= small | maxDets=100 ] = 0.011
-	 - Average Precision (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.039
-	 - Average Precision (AP) @[ IoU=0.50      | area=medium | maxDets=100 ] = 0.131
-	 - Average Precision (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.154
-	 - Average Precision (AP) @[ IoU=0.50      | area= large | maxDets=100 ] = 0.405
+2022-11-26 22:16:17 | YOLOv3 Architecture Info - Params(M): 61.65, FLOPS(B): 65.74
+2022-11-26 22:21:53 | [Train-Epoch:001] multipart: 430.8379  obj: 0.5071  noobj: 421.2422  txty: 0.3636  twth: 1.1664  cls: 5.5302  
+2022-11-26 22:27:30 | [Train-Epoch:002] multipart: 7.2063  obj: 0.7710  noobj: 0.1393  txty: 0.3232  twth: 0.4657  cls: 2.4231  
+2022-11-26 22:33:07 | [Train-Epoch:003] multipart: 6.5012  obj: 0.7929  noobj: 0.2720  txty: 0.3107  twth: 0.3330  cls: 1.6208  
+2022-11-26 22:38:39 | [Train-Epoch:004] multipart: 6.1957  obj: 0.7574  noobj: 0.3817  txty: 0.2998  twth: 0.3036  cls: 1.4235  
+2022-11-26 22:44:14 | [Train-Epoch:005] multipart: 5.9186  obj: 0.7301  noobj: 0.4557  txty: 0.2879  twth: 0.2594  cls: 1.2649  
+2022-11-26 22:49:48 | [Train-Epoch:006] multipart: 5.7983  obj: 0.7167  noobj: 0.4926  txty: 0.2797  twth: 0.2444  cls: 1.1983  
+2022-11-26 22:55:27 | [Train-Epoch:007] multipart: 5.6003  obj: 0.6963  noobj: 0.5234  txty: 0.2740  twth: 0.2339  cls: 1.0875  
+2022-11-26 23:01:03 | [Train-Epoch:008] multipart: 5.4977  obj: 0.6828  noobj: 0.5541  txty: 0.2669  twth: 0.2198  cls: 1.0429  
+2022-11-26 23:05:44 | [Train-Epoch:009] multipart: 5.3483  obj: 0.6623  noobj: 0.6062  txty: 0.2594  twth: 0.2071  cls: 0.9639  
+2022-11-26 23:11:28 | [Train-Epoch:010] multipart: 5.2561  obj: 0.6460  noobj: 0.6265  txty: 0.2553  twth: 0.1975  cls: 0.9466  
+2022-11-26 23:12:54 | 
+	 - Average Precision (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.299
+	 - Average Precision (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.555
+	 - Average Precision (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.270
+	 - Average Precision (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.075
+	 - Average Precision (AP) @[ IoU=0.50      | area= small | maxDets=100 ] = 0.165
+	 - Average Precision (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.075
+	 - Average Precision (AP) @[ IoU=0.50      | area=medium | maxDets=100 ] = 0.177
+	 - Average Precision (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.363
+	 - Average Precision (AP) @[ IoU=0.50      | area= large | maxDets=100 ] = 0.664
 
                                                 ...
 
-2022-11-09 22:59:17 | [Train-Epoch:135] multipart: 1.6719  obj: 0.3912  noobj: 0.3355  box: 0.1720  cls: 0.2530  
-2022-11-09 22:59:40 | 
-	 - Average Precision (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.329
-	 - Average Precision (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.605
-	 - Average Precision (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.292
-	 - Average Precision (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.009
-	 - Average Precision (AP) @[ IoU=0.50      | area= small | maxDets=100 ] = 0.036
-	 - Average Precision (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.113
-	 - Average Precision (AP) @[ IoU=0.50      | area=medium | maxDets=100 ] = 0.293
-	 - Average Precision (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.399
-	 - Average Precision (AP) @[ IoU=0.50      | area= large | maxDets=100 ] = 0.688
+2022-11-27 12:59:59 | [Train-Epoch:100] multipart: 3.2324  obj: 0.3703  noobj: 0.8265  txty: 0.1715  twth: 0.0972  cls: 0.2859  
+2022-11-27 13:01:17 | 
+	 - Average Precision (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.490
+	 - Average Precision (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.759
+	 - Average Precision (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.536
+	 - Average Precision (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.157
+	 - Average Precision (AP) @[ IoU=0.50      | area= small | maxDets=100 ] = 0.303
+	 - Average Precision (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.284
+	 - Average Precision (AP) @[ IoU=0.50      | area=medium | maxDets=100 ] = 0.517
+	 - Average Precision (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.540
+	 - Average Precision (AP) @[ IoU=0.50      | area= large | maxDets=100 ] = 0.796
 ```
 
 
