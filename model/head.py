@@ -43,7 +43,7 @@ class DetectLayer(nn.Module):
             return torch.cat((pred_obj, pred_box_txty, pred_box_twth, pred_cls), dim=-1)
         else:
             pred_box = self.transform_pred_box(torch.cat((pred_box_txty, pred_box_twth), dim=-1))
-            pred_score = pred_obj * torch.softmax(pred_cls, dim=-1)
+            pred_score = pred_obj * torch.sigmoid(pred_cls)
             pred_score, pred_label = pred_score.max(dim=-1)
             pred_out = torch.cat((pred_score.unsqueeze(-1), pred_box, pred_label.unsqueeze(-1)), dim=-1)
             return pred_out.flatten(1, 2)
