@@ -43,7 +43,7 @@ This is a repository for PyTorch implementation of YOLOv3 following the original
  - You extract anchor box priors from all instances' boxes at first.
 
  ```python
-python kmedoids_anchor.py --exp_name my_test --data voc.yaml  --n_cluster 9
+python kmedoids_anchor.py --exp my_test --data voc.yaml  --n_cluster 9
  ```
 
 
@@ -73,7 +73,7 @@ python kmedoids_anchor.py --exp_name my_test --data voc.yaml  --n_cluster 9
  - You can train your own YOLOv3 model using Darknet-53 with anchor box from above step.
 
 ```python
-python train.py --exp_name my_test --data voc.yaml
+python train.py --exp my_test --data voc.yaml
 ```
 
 
@@ -81,7 +81,7 @@ python train.py --exp_name my_test --data voc.yaml
  - You can compute detection metric via mean Average Precision(mAP) with IoU of 0.5, 0.75, 0.5:0.95. I follow the evaluation code with the reference on https://github.com/rafaelpadilla/Object-Detection-Metrics.
 
 ```python
-python val.py --exp_name my_test --data voc.yaml --ckpt_name best.pt
+python val.py --exp my_test --data voc.yaml --ckpt_name best.pt
 ```
 
 
