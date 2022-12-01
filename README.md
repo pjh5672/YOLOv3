@@ -29,7 +29,7 @@ This is a repository for PyTorch implementation of YOLOv3 following the original
 
  - **Pretrained Model Download**
 
-	- [DarkNet-53 Backbone](https://drive.google.com/file/d/19lyl0lROc7UuTB-qKg38_WOxX8Id7Gxq/view?usp=share_link)
+	- [DarkNet-53 Backbone](https://drive.google.com/file/d/1f8z9osppLNCf2jan8K8QJ2bNNOu0qrGZ/view?usp=share_link)
 	- [YOLOv3 trained on VOC (AP@0.50 - 79.5)](https://drive.google.com/file/d/1HtIapJ_o8ltJtg9FWf6Q7zfCkCmBepdC/view?usp=share_link)
 	- [YOLOv3-multiscale trained on VOC (AP@0.50 - 78.9)](https://drive.google.com/file/d/1r0CAuzjgpilzivTE5NnqLqr7bOx8kfLs/view?usp=share_link)
 
