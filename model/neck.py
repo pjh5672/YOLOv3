@@ -1,41 +1,7 @@
 import torch
 from torch import nn
 
-from element import Conv
-
-
-
-class SPP(nn.Module):
-    # Spatial Pyramid Pooling (SPP) layer https://arxiv.org/abs/1406.4729
-    def __init__(self, in_channels, out_channels, k=(5, 9, 13)):
-        super().__init__()
-        c_ = in_channels // 2  # hidden channels
-        self.cv1 = Conv(in_channels, c_, 1, 1)
-        self.cv2 = Conv(c_ * (len(k) + 1), out_channels, 1, 1)
-        self.m = nn.ModuleList([nn.MaxPool2d(kernel_size=x, stride=1, padding=x // 2) for x in k])
-
-
-    def forward(self, x):
-        x = self.cv1(x)
-        return self.cv2(torch.cat([x] + [m(x) for m in self.m], 1))
-
-
-
-class SPPF(nn.Module):
-    # Spatial Pyramid Pooling - Fast (SPPF) layer for  by Glenn Jocher
-    def __init__(self, in_channels, out_channels, k=5):  # equivalent to SPP(k=(5, 9, 13))
-        super().__init__()
-        c_ = in_channels // 2  # hidden channels
-        self.cv1 = Conv(in_channels, c_, 1, 1)
-        self.cv2 = Conv(c_ * 4, out_channels, 1, 1)
-        self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
-
-
-    def forward(self, x):
-        x = self.cv1(x)
-        y1 = self.m(x)
-        y2 = self.m(y1)
-        return self.cv2(torch.cat([x, y1, y2, self.m(y2)], 1))
+from element import Conv, SPP, SPPF
 
 
 
@@ -61,7 +27,7 @@ class TopDownLayer(nn.Module):
 class TopDownLayerWithSPP(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
-        self.spp = SPP(in_channels=in_channels, out_channels=out_channels)
+        self.spp = SPP(in_channels, out_channels)
         self.conv1 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1)
         self.conv2 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0)
         self.conv3 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1)
