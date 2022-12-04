@@ -27,7 +27,7 @@ class YoloModel(nn.Module):
         if self.model_type == "default":
             self.neck = FPN(feat_dims=feat_dims)
             self.head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors)
-        elif self.model_type == "SPP":
+        elif self.model_type == "spp":
             self.neck = FPN_with_SPP(feat_dims=feat_dims)
             self.head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors)
         elif self.model_type == "tiny":

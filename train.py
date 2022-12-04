@@ -176,7 +176,7 @@ def main_work(rank, world_size, args, logger):
     model = YoloModel(input_size=args.img_size, num_classes=len(args.class_list), anchors=args.anchors, model_type=args.model_type)
     macs, params = profile(deepcopy(model), inputs=(torch.randn(1, 3, args.img_size, args.img_size),), verbose=False)
     model.set_grid_xy(input_size=args.train_size)
-    criterion = YoloLoss(input_size=args.train_size, num_classes=len(args.class_list), anchors=model.anchors, num_scales=2 if args.model_type == "tiny" else 3)
+    criterion = YoloLoss(input_size=args.train_size, num_classes=len(args.class_list), anchors=model.anchors, model_type=args.model_type)
     optimizer = optim.SGD(model.parameters(), lr=args.base_lr, momentum=args.momentum, weight_decay=args.weight_decay)
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=args.lr_decay, gamma=0.1)
     evaluator = Evaluator(annotation_file=args.mAP_file_path)
