@@ -13,12 +13,11 @@ from utils import set_grid
 
 
 class YoloLoss():
-    def __init__(self, input_size, num_classes, anchors, model_type):
+    def __init__(self, input_size, num_classes, anchors, num_scales=3):
+        self.num_scales = 3
         self.lambda_obj = 5.0
         self.iou_threshold = 0.5
         self.anchors = anchors
-        self.model_type = model_type
-        self.num_scales = 2 if model_type == "tiny" else 3
         self.num_classes = num_classes
         self.num_attributes = 1 + 4 + num_classes
         self.num_anchors_per_scale = len(anchors) // self.num_scales
@@ -39,7 +38,6 @@ class YoloLoss():
             grid_size = self.grid_size[index]
             grid_xy = (self.grid_x[index], self.grid_y[index])
             anchors = self.anchors[(index*self.num_anchors_per_scale):(index*self.num_anchors_per_scale)+self.num_anchors_per_scale]
-
             iou_pred_with_target = self.calculate_iou(pred_box_txtytwth=prediction[..., 1:5], target_box_txtytwth=target[..., 1:5], 
                                                       grid_size=grid_size, grid_xy=grid_xy, anchors=anchors)
             
@@ -75,8 +73,7 @@ class YoloLoss():
 
     def set_grid_xy(self, input_size):
         self.grid_size, self.grid_x, self.grid_y = [], [], []
-        strides = [16, 32] if self.model_type == "tiny" else [8, 16, 32]
-        for stride in strides:
+        for stride in [8, 16, 32]:
             self.grid_size.append(input_size // stride)
             grid_x, grid_y = set_grid(grid_size=input_size // stride)
             self.grid_x.append(grid_x.contiguous().view((1, -1, 1)))
@@ -127,33 +124,18 @@ class YoloLoss():
 
 
     def build_batch_target(self, labels):
-        if self.model_type in ("default, spp"):
-            targets_s, targets_m, targets_l = [], [], []
+        targets_s, targets_m, targets_l = [], [], []
 
-            for label in labels:
-                targets = self.build_target(label)
-                targets_s.append(targets[0])
-                targets_m.append(targets[1])
-                targets_l.append(targets[2])
+        for label in labels:
+            targets = self.build_target(label)
+            targets_s.append(targets[0])
+            targets_m.append(targets[1])
+            targets_l.append(targets[2])
 
-            batch_target_s = torch.stack(targets_s, dim=0).view(self.bs, -1, self.num_anchors_per_scale, self.num_attributes).to(self.device)
-            batch_target_m = torch.stack(targets_m, dim=0).view(self.bs, -1, self.num_anchors_per_scale, self.num_attributes).to(self.device)
-            batch_target_l = torch.stack(targets_l, dim=0).view(self.bs, -1, self.num_anchors_per_scale, self.num_attributes).to(self.device)
-            return batch_target_s, batch_target_m, batch_target_l
-
-        elif self.model_type in ("tiny"):
-            targets_m, targets_l = [], []
-
-            for label in labels:
-                targets = self.build_target(label)
-                targets_m.append(targets[0])
-                targets_l.append(targets[1])
-
-            batch_target_m = torch.stack(targets_m, dim=0).view(self.bs, -1, self.num_anchors_per_scale, self.num_attributes).to(self.device)
-            batch_target_l = torch.stack(targets_l, dim=0).view(self.bs, -1, self.num_anchors_per_scale, self.num_attributes).to(self.device)
-            return batch_target_m, batch_target_l
-            
-
+        batch_target_s = torch.stack(targets_s, dim=0).view(self.bs, -1, self.num_anchors_per_scale, self.num_attributes).to(self.device)
+        batch_target_m = torch.stack(targets_m, dim=0).view(self.bs, -1, self.num_anchors_per_scale, self.num_attributes).to(self.device)
+        batch_target_l = torch.stack(targets_l, dim=0).view(self.bs, -1, self.num_anchors_per_scale, self.num_attributes).to(self.device)
+        return batch_target_s, batch_target_m, batch_target_l
 
 
     @torch.no_grad()
@@ -194,10 +176,10 @@ if __name__ == "__main__":
     from dataloader import Dataset, BasicTransform, AugmentTransform
     from model import YoloModel
 
-    yaml_path = ROOT / 'data' / 'voc-tiny.yaml'
+    yaml_path = ROOT / 'data' / 'toy.yaml'
     input_size = 320
     batch_size = 1
-    model_type = "tiny"
+    model_type = "default"
     device = torch.device('cuda')
 
     transformer = BasicTransform(input_size=input_size)
@@ -209,7 +191,7 @@ if __name__ == "__main__":
     num_classes = len(train_dataset.class_list)
     
     model = YoloModel(input_size=input_size, num_classes=num_classes, anchors=anchors, model_type=model_type).to(device)
-    criterion = YoloLoss(input_size=input_size, num_classes=num_classes, anchors=model.anchors, model_type=model_type)
+    criterion = YoloLoss(input_size=input_size, num_classes=num_classes, anchors=model.anchors)
     optimizer = optim.SGD(model.parameters(), lr=0.0001)
     optimizer.zero_grad()
 

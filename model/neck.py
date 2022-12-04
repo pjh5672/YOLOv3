@@ -121,23 +121,6 @@ class FPN_with_SPP(nn.Module):
 
 
 
-class FPN_tiny(nn.Module):
-    def __init__(self, feat_dims):
-        super().__init__()
-        self.topdown1 = TopDownLayer(in_channels=feat_dims[2], out_channels=feat_dims[2]//2)
-        self.conv1 = Conv(feat_dims[2]//2, feat_dims[2]//4, kernel_size=1, stride=1, padding=0)
-        self.topdown2 = TopDownLayer(in_channels=feat_dims[1]+feat_dims[2]//4, out_channels=feat_dims[-2]//2)
-        self.upsample = nn.Upsample(scale_factor=2)
-
-
-    def forward(self, x):
-        _, ftr_m, ftr_l = x
-        C1 = self.topdown1(ftr_l)
-        P1 = self.upsample(self.conv1(C1))
-        C2 = self.topdown2(torch.cat((P1, ftr_m), dim=1))
-        return C1, C2
-
-
 
 if __name__ == "__main__":
     from backbone import build_backbone
@@ -146,9 +129,8 @@ if __name__ == "__main__":
     device = torch.device('cpu')
     backbone, feat_dims = build_backbone(pretrained=False)
     print(feat_dims)
-    # neck = FPN(feat_dims=feat_dims)
-    # neck = FPN_with_SPP(feat_dims=feat_dims)
-    neck = FPN_tiny(feat_dims=feat_dims)
+    neck = FPN(feat_dims=feat_dims)
+    neck = FPN_with_SPP(feat_dims=feat_dims)
 
     x = torch.randn(1, 3, input_size, input_size).to(device)
     ftrs = backbone(x)

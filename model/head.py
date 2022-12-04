@@ -83,25 +83,10 @@ class YoloHead(nn.Module):
 
 
 
-class YoloHead_tiny(nn.Module):
-    def __init__(self, input_size, in_channels, num_classes, anchors):
-        super().__init__()
-        anchors = torch.tensor(anchors) if not torch.is_tensor(anchors) else anchors
-        self.detect_m = DetectLayer(input_size=input_size, in_channels=in_channels[1]//2, num_classes=num_classes, anchors=anchors[0:3], stride=16)
-        self.detect_l = DetectLayer(input_size=input_size, in_channels=in_channels[2]//2, num_classes=num_classes, anchors=anchors[3:6], stride=32)
-
-
-    def forward(self, x):
-        C1, C2 = x
-        pred_m = self.detect_m(C2)
-        pred_l = self.detect_l(C1)
-        return pred_m, pred_l
-
-
 
 if __name__ == "__main__":
     from backbone import build_backbone
-    from neck import FPN, FPN_tiny
+    from neck import FPN
 
     input_size = 320
     num_classes = 1
@@ -117,10 +102,8 @@ if __name__ == "__main__":
                 [0.944,      0.5733333 ]]
 
     backbone, feat_dims = build_backbone(pretrained=False)
-    # neck = FPN(feat_dims=feat_dims)
-    # head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors)
-    neck = FPN_tiny(feat_dims=feat_dims)
-    head = YoloHead_tiny(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors)
+    neck = FPN(feat_dims=feat_dims)
+    head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors)
 
     x = torch.randn(1, 3, input_size, input_size)
     ftrs = backbone(x)

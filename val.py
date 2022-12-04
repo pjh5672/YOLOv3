@@ -97,7 +97,7 @@ def parse_args(make_dirs=True):
     parser = argparse.ArgumentParser()
     parser.add_argument("--exp", type=str, required=True, help="Name to log training")
     parser.add_argument("--data", type=str, default="toy.yaml", help="Path to data.yaml")
-    parser.add_argument("--model_type", type=str, default="default", help="Model architecture default mode")
+    parser.add_argument("--model_type", type=str, default="default", help="Model architecture mode")
     parser.add_argument("--img_size", type=int, default=416, help="Model input size")
     parser.add_argument("--batch_size", type=int, default=16, help="Batch size")
     parser.add_argument("--num_epochs", type=int, default=1, help="Number of training epochs")
