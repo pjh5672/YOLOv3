@@ -87,8 +87,8 @@ class YoloHead_tiny(nn.Module):
     def __init__(self, input_size, in_channels, num_classes, anchors):
         super().__init__()
         anchors = torch.tensor(anchors) if not torch.is_tensor(anchors) else anchors
-        self.detect_m = DetectLayer(input_size=input_size, in_channels=in_channels[1]//2, num_classes=num_classes, anchors=anchors[3:6], stride=16)
-        self.detect_l = DetectLayer(input_size=input_size, in_channels=in_channels[2]//2, num_classes=num_classes, anchors=anchors[6:9], stride=32)
+        self.detect_m = DetectLayer(input_size=input_size, in_channels=in_channels[1]//2, num_classes=num_classes, anchors=anchors[0:3], stride=16)
+        self.detect_l = DetectLayer(input_size=input_size, in_channels=in_channels[2]//2, num_classes=num_classes, anchors=anchors[3:6], stride=32)
 
 
     def forward(self, x):
