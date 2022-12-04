@@ -1,0 +1,43 @@
+PATH: d:/DATASET/PASCAL-VOC
+
+TRAIN: 
+ - images/train2007
+ - images/train2012
+ - images/val2007
+ - images/val2012
+VAL: 
+ - images/test2007
+
+MAP_FILE_NAME: voc_val.json
+
+ANCHORS:
+  [[0.058,      0.104     ],
+  [0.128,      0.21066667],
+  [0.194,      0.472     ],
+  [0.34,       0.288     ],
+  [0.426,      0.642     ],
+  [0.834,      0.808     ]]
+
+
+CLASS_INFO: {
+  0: 'aeroplane',
+  1: 'bicycle',
+  2: 'bird',
+  3: 'boat',
+  4: 'bottle',
+  5: 'bus',
+  6: 'car',
+  7: 'cat',
+  8: 'chair',
+  9: 'cow',
+  10: 'diningtable',
+  11: 'dog',
+  12: 'horse',
+  13: 'motorbike',
+  14: 'person',
+  15: 'pottedplant',
+  16: 'sheep',
+  17: 'sofa',
+  18: 'train',
+  19: 'tvmonitor'
+}

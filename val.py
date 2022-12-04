@@ -97,6 +97,7 @@ def parse_args(make_dirs=True):
     parser = argparse.ArgumentParser()
     parser.add_argument("--exp", type=str, required=True, help="Name to log training")
     parser.add_argument("--data", type=str, default="toy.yaml", help="Path to data.yaml")
+    parser.add_argument("--model_type", type=str, default="default", help="Model architecture default mode")
     parser.add_argument("--img_size", type=int, default=416, help="Model input size")
     parser.add_argument("--batch_size", type=int, default=16, help="Batch size")
     parser.add_argument("--num_epochs", type=int, default=1, help="Number of training epochs")
@@ -131,10 +132,11 @@ def main():
     ckpt = torch.load(args.ckpt_path, map_location = {"cpu":"cuda:%d" %args.rank})
     args.anchors = ckpt["anchors"]
     args.class_list = ckpt["class_list"]
+    args.model_type = ckpt["model_type"]
     args.color_list = generate_random_color(len(args.class_list))
     args.mAP_file_path = val_dataset.mAP_file_path
 
-    model = YoloModel(input_size=args.img_size, num_classes=len(args.class_list), anchors=args.anchors)
+    model = YoloModel(input_size=args.img_size, num_classes=len(args.class_list), anchors=args.anchors, model_type=args.model_type)
     model.load_state_dict(ckpt["model_state"], strict=True)
     model = model.cuda(args.rank)
     evaluator = Evaluator(annotation_file=args.mAP_file_path)

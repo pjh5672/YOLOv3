@@ -101,6 +101,7 @@ def parse_args(make_dirs=True):
     parser.add_argument("--exp", type=str, required=True, help="Name to log training")
     parser.add_argument("--resume", type=str, nargs='?', const=True ,help="Name to resume path")
     parser.add_argument("--data", type=str, default="toy.yaml", help="Path to data.yaml")
+    parser.add_argument("--model_type", type=str, default="default", help="Model architecture default mode")
     parser.add_argument('--multiscale', action='store_true', help='Multi-scale training')
     parser.add_argument("--img_size", type=int, default=416, help="Model input size")
     parser.add_argument("--batch_size", type=int, default=32, help="Batch size")
@@ -172,7 +173,7 @@ def main_work(rank, world_size, args, logger):
     args.nw = max(round(args.warmup * len(train_loader)), 100)
     args.mAP_file_path = val_dataset.mAP_file_path
 
-    model = YoloModel(input_size=args.img_size, num_classes=len(args.class_list), anchors=args.anchors)
+    model = YoloModel(input_size=args.img_size, num_classes=len(args.class_list), anchors=args.anchors, model_type=args.model_type)
     macs, params = profile(deepcopy(model), inputs=(torch.randn(1, 3, args.img_size, args.img_size),), verbose=False)
     model.set_grid_xy(input_size=args.train_size)
     criterion = YoloLoss(input_size=args.train_size, num_classes=len(args.class_list), anchors=model.anchors)
@@ -227,6 +228,7 @@ def main_work(rank, world_size, args, logger):
         if args.rank == 0:
             logging.warning(train_loss_str) 
             save_opt = {"running_epoch": epoch,
+                        "model_type": args.model_type,
                         "class_list": args.class_list,
                         "model_state": deepcopy(model.module).state_dict() if hasattr(model, "module") else deepcopy(model).state_dict(),
                         "optimizer_state": optimizer.state_dict(),
