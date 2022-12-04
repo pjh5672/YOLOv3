@@ -5,7 +5,7 @@ import torch
 from torch import nn
 
 from backbone import build_backbone
-from neck import FPN, FPN_with_SPP
+from neck import FPN, FPNWithSPP
 from head import YoloHead
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,7 +28,7 @@ class YoloModel(nn.Module):
             self.neck = FPN(feat_dims=feat_dims)
             self.head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors)
         elif self.model_type == "spp":
-            self.neck = FPN_with_SPP(feat_dims=feat_dims)
+            self.neck = FPNWithSPP(feat_dims=feat_dims)
             self.head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors)
         else:
             raise RuntimeError(f"got invalid argument for model_type: {self.model_type}.")
