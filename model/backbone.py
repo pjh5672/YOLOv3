@@ -48,7 +48,7 @@ def build_backbone(depthwise=False):
         ckpt = torch.load(ROOT / "weights" / "darknet53_depthwise.pt")
     else:
         ckpt = torch.load(ROOT / "weights" / "darknet53.pt")
-    model.load_state_dict(ckpt, strict=False)
+    model.load_state_dict(ckpt["model_state"], strict=False)
     return model, feat_dims
 
 
