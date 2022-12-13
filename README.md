@@ -29,7 +29,7 @@ This is a repository for PyTorch implementation of YOLOv3 following the original
 | YOLOv3-multiscale<br><sup>(<u>Our:star:</u>)</br> | PASCAL-VOC | trainval2007+2012 | test2007 | 320~608 | 53.0 | 78.9 | 61.55 | 65.60 |
 
 
- - **Pretrained Model Download**
+ - **Pretrained Model Weights Download**
 
 	- [DarkNet-53 Backbone](https://drive.google.com/file/d/1f8z9osppLNCf2jan8K8QJ2bNNOu0qrGZ/view?usp=share_link)
 	- [YOLOv3 trained on VOC (AP@0.50 - 79.5)](https://drive.google.com/file/d/1HtIapJ_o8ltJtg9FWf6Q7zfCkCmBepdC/view?usp=share_link)
