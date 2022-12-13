@@ -15,7 +15,7 @@ if str(ROOT) not in sys.path:
 
 
 class YoloModel(nn.Module):
-    def __init__(self, input_size, num_classes, anchors, model_type):
+    def __init__(self, input_size, num_classes, anchors, model_type, pretrained=False, depthwise=False):
         super().__init__()
         self.input_size = input_size
         self.num_classes = num_classes
@@ -23,15 +23,22 @@ class YoloModel(nn.Module):
         self.anchors = torch.tensor(anchors)
         self.num_attributes = 1 + 4 + num_classes
         
-        self.backbone, feat_dims = build_backbone(pretrained=True)
+        self.backbone, feat_dims = build_backbone(depthwise=depthwise)
         if self.model_type == "default":
-            self.neck = FPN(feat_dims=feat_dims)
-            self.head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors)
+            self.neck = FPN(feat_dims=feat_dims, depthwise=depthwise)
+            self.head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors, depthwise=depthwise)
         elif self.model_type == "spp":
-            self.neck = FPNWithSPP(feat_dims=feat_dims)
-            self.head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors)
+            self.neck = FPNWithSPP(feat_dims=feat_dims, depthwise=depthwise)
+            self.head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors, depthwise=depthwise)
         else:
             raise RuntimeError(f"got invalid argument for model_type: {self.model_type}.")
+        
+        if pretrained:
+            if depthwise:
+                ckpt = torch.load(ROOT / "weights" / "yolov3_depthwise.pt", map_location="cpu")
+            else:
+                ckpt = torch.load(ROOT / "weights" / "yolov3.pt", map_location="cpu")
+            self.load_state_dict(ckpt["model_state"], strict=False)
 
 
     def forward(self, x):
@@ -67,7 +74,7 @@ if __name__ == "__main__":
                 [0.8605263,  0.8736842 ],
                 [0.944,      0.5733333 ]]
 
-    model = YoloModel(input_size=input_size, num_classes=num_classes, anchors=anchors, model_type=model_type).to(device)
+    model = YoloModel(input_size=input_size, num_classes=num_classes, anchors=anchors, model_type=model_type, depthwise=False).to(device)
 
     model.train()
     preds = model(torch.randn(1, 3, input_size, input_size).to(device))

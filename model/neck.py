@@ -6,13 +6,13 @@ from element import Conv, SPP, SPPF
 
 
 class TopDownLayer(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, depthwise=False):
         super().__init__()
-        self.conv1 = Conv(in_channels, out_channels, kernel_size=1, stride=1, padding=0)
-        self.conv2 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1)
-        self.conv3 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0)
-        self.conv4 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1)
-        self.conv5 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0)
+        self.conv1 = Conv(in_channels, out_channels, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
+        self.conv2 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, depthwise=depthwise)
+        self.conv3 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
+        self.conv4 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, depthwise=depthwise)
+        self.conv5 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
 
 
     def forward(self, x):
@@ -25,13 +25,13 @@ class TopDownLayer(nn.Module):
 
 
 class TopDownLayerWithSPP(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels, out_channels, depthwise=False):
         super().__init__()
-        self.spp = SPP(in_channels, out_channels)
-        self.conv1 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1)
-        self.conv2 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0)
-        self.conv3 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1)
-        self.conv4 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0)
+        self.spp = SPPF(in_channels, out_channels, depthwise=depthwise)
+        self.conv1 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, depthwise=depthwise)
+        self.conv2 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
+        self.conv3 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, depthwise=depthwise)
+        self.conv4 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
 
 
     def forward(self, x):
@@ -44,13 +44,13 @@ class TopDownLayerWithSPP(nn.Module):
 
 
 class FPN(nn.Module):
-    def __init__(self, feat_dims):
+    def __init__(self, feat_dims, depthwise=False):
         super().__init__()
-        self.topdown1 = TopDownLayer(in_channels=feat_dims[2], out_channels=feat_dims[2]//2)
-        self.conv1 = Conv(feat_dims[2]//2, feat_dims[2]//4, kernel_size=1, stride=1, padding=0)
-        self.topdown2 = TopDownLayer(in_channels=feat_dims[1]+feat_dims[2]//4, out_channels=feat_dims[-2]//2)
-        self.conv2 = Conv(feat_dims[1]//2, feat_dims[1]//4, kernel_size=1, stride=1, padding=0)
-        self.topdown3 = TopDownLayer(in_channels=feat_dims[0]+feat_dims[1]//4, out_channels=feat_dims[-3]//2)
+        self.topdown1 = TopDownLayer(in_channels=feat_dims[2], out_channels=feat_dims[2]//2, depthwise=depthwise)
+        self.conv1 = Conv(feat_dims[2]//2, feat_dims[2]//4, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
+        self.topdown2 = TopDownLayer(in_channels=feat_dims[1]+feat_dims[2]//4, out_channels=feat_dims[-2]//2, depthwise=depthwise)
+        self.conv2 = Conv(feat_dims[1]//2, feat_dims[1]//4, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
+        self.topdown3 = TopDownLayer(in_channels=feat_dims[0]+feat_dims[1]//4, out_channels=feat_dims[-3]//2, depthwise=depthwise)
         self.upsample = nn.Upsample(scale_factor=2)
 
 
@@ -66,13 +66,13 @@ class FPN(nn.Module):
 
 
 class FPNWithSPP(nn.Module):
-    def __init__(self, feat_dims):
+    def __init__(self, feat_dims, depthwise=False):
         super().__init__()
-        self.topdown1 = TopDownLayerWithSPP(in_channels=feat_dims[2], out_channels=feat_dims[2]//2)
-        self.conv1 = Conv(feat_dims[2]//2, feat_dims[2]//4, kernel_size=1, stride=1, padding=0)
-        self.topdown2 = TopDownLayer(in_channels=feat_dims[1]+feat_dims[2]//4, out_channels=feat_dims[-2]//2)
-        self.conv2 = Conv(feat_dims[1]//2, feat_dims[1]//4, kernel_size=1, stride=1, padding=0)
-        self.topdown3 = TopDownLayer(in_channels=feat_dims[0]+feat_dims[1]//4, out_channels=feat_dims[-3]//2)
+        self.topdown1 = TopDownLayerWithSPP(in_channels=feat_dims[2], out_channels=feat_dims[2]//2, depthwise=depthwise)
+        self.conv1 = Conv(feat_dims[2]//2, feat_dims[2]//4, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
+        self.topdown2 = TopDownLayer(in_channels=feat_dims[1]+feat_dims[2]//4, out_channels=feat_dims[-2]//2, depthwise=depthwise)
+        self.conv2 = Conv(feat_dims[1]//2, feat_dims[1]//4, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
+        self.topdown3 = TopDownLayer(in_channels=feat_dims[0]+feat_dims[1]//4, out_channels=feat_dims[-3]//2, depthwise=depthwise)
         self.upsample = nn.Upsample(scale_factor=2)
 
 
@@ -93,10 +93,9 @@ if __name__ == "__main__":
     
     input_size = 320
     device = torch.device('cpu')
-    backbone, feat_dims = build_backbone(pretrained=False)
-    print(feat_dims)
-    neck = FPN(feat_dims=feat_dims)
-    neck = FPNWithSPP(feat_dims=feat_dims)
+    backbone, feat_dims = build_backbone(depthwise=False)
+    neck = FPN(feat_dims=feat_dims, depthwise=False)
+    neck = FPNWithSPP(feat_dims=feat_dims, depthwise=False)
 
     x = torch.randn(1, 3, input_size, input_size).to(device)
     ftrs = backbone(x)

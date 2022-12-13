@@ -15,13 +15,13 @@ from utils import set_grid
 
 
 class DetectLayer(nn.Module):
-    def __init__(self, input_size, in_channels, num_classes, anchors, stride):
+    def __init__(self, input_size, in_channels, num_classes, anchors, stride, depthwise=False):
         super().__init__()
         self.stride = stride
         self.anchors = anchors
         self.num_anchors = len(anchors)
         self.num_attributes = 1 + 4 + num_classes
-        self.conv = Conv(in_channels, in_channels*2, kernel_size=3, padding=1)
+        self.conv = Conv(in_channels, in_channels*2, kernel_size=3, padding=1, depthwise=depthwise)
         self.detect = nn.Conv2d(in_channels*2, self.num_attributes*self.num_anchors, kernel_size=1, padding=0)
         self.set_grid_xy(input_size=input_size)
 
@@ -66,12 +66,15 @@ class DetectLayer(nn.Module):
 
 
 class YoloHead(nn.Module):
-    def __init__(self, input_size, in_channels, num_classes, anchors):
+    def __init__(self, input_size, in_channels, num_classes, anchors, depthwise=False):
         super().__init__()
         anchors = torch.tensor(anchors) if not torch.is_tensor(anchors) else anchors
-        self.detect_s = DetectLayer(input_size=input_size, in_channels=in_channels[0]//2, num_classes=num_classes, anchors=anchors[0:3], stride=8)
-        self.detect_m = DetectLayer(input_size=input_size, in_channels=in_channels[1]//2, num_classes=num_classes, anchors=anchors[3:6], stride=16)
-        self.detect_l = DetectLayer(input_size=input_size, in_channels=in_channels[2]//2, num_classes=num_classes, anchors=anchors[6:9], stride=32)
+        self.detect_s = DetectLayer(input_size=input_size, in_channels=in_channels[0]//2,
+                                    num_classes=num_classes, anchors=anchors[0:3], stride=8, depthwise=depthwise)
+        self.detect_m = DetectLayer(input_size=input_size, in_channels=in_channels[1]//2, 
+                                    num_classes=num_classes, anchors=anchors[3:6], stride=16, depthwise=depthwise)
+        self.detect_l = DetectLayer(input_size=input_size, in_channels=in_channels[2]//2, 
+                                    num_classes=num_classes, anchors=anchors[6:9], stride=32, depthwise=depthwise)
 
 
     def forward(self, x):
@@ -101,9 +104,9 @@ if __name__ == "__main__":
                 [0.8605263,  0.8736842 ],
                 [0.944,      0.5733333 ]]
 
-    backbone, feat_dims = build_backbone(pretrained=False)
-    neck = FPN(feat_dims=feat_dims)
-    head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors)
+    backbone, feat_dims = build_backbone(depthwise=False)
+    neck = FPN(feat_dims=feat_dims, depthwise=False)
+    head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors, depthwise=False)
 
     x = torch.randn(1, 3, input_size, input_size)
     ftrs = backbone(x)
@@ -116,5 +119,3 @@ if __name__ == "__main__":
     preds = head(ftrs)
     for pred in preds:
         print(pred.shape)
-
-    
