@@ -120,7 +120,6 @@ def parse_args(make_dirs=True):
     parser.add_argument("--rank", type=int, default=0, help="Process id for computation")
     parser.add_argument("--no_amp", action="store_true", help="Use of FP32 training (default: AMP training)")
     parser.add_argument("--multiscale", action="store_true", help="Multi-scale training")
-    parser.add_argument("--depthwise", action="store_true", help="Use of Depth-separable conv operation")
     parser.add_argument("--scratch", action="store_true", help="Scratch training without pretrained weights")
     parser.add_argument("--resume", action="store_true", help="Name to resume path")
 
@@ -177,8 +176,7 @@ def main_work(rank, world_size, args, logger):
     args.nw = max(round(args.warmup * len(train_loader)), 100)
     args.mAP_file_path = val_dataset.mAP_file_path
 
-    model = YoloModel(input_size=args.img_size, num_classes=len(args.class_list), anchors=args.anchors, 
-                      model_type=args.model_type, pretrained=not args.scratch, depthwise=args.depthwise)
+    model = YoloModel(input_size=args.img_size, num_classes=len(args.class_list), anchors=args.anchors, model_type=args.model_type, pretrained=not args.scratch)
     macs, params = profile(deepcopy(model), inputs=(torch.randn(1, 3, args.img_size, args.img_size),), verbose=False)
     model.set_grid_xy(input_size=args.train_size)
     criterion = YoloLoss(input_size=args.train_size, num_classes=len(args.class_list), anchors=model.anchors)
@@ -232,7 +230,6 @@ def main_work(rank, world_size, args, logger):
         if args.rank == 0:
             logging.warning(train_loss_str) 
             save_opt = {"running_epoch": epoch,
-                        "depthwise": args.depthwise,
                         "model_type": args.model_type,
                         "class_list": args.class_list,
                         "model_state": deepcopy(model.module).state_dict() if hasattr(model, "module") else deepcopy(model).state_dict(),

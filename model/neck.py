@@ -6,13 +6,13 @@ from element import Conv, SPP, SPPF
 
 
 class TopDownLayer(nn.Module):
-    def __init__(self, in_channels, out_channels, depthwise=False):
+    def __init__(self, in_channels, out_channels):
         super().__init__()
-        self.conv1 = Conv(in_channels, out_channels, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
-        self.conv2 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, depthwise=depthwise)
-        self.conv3 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
-        self.conv4 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, depthwise=depthwise)
-        self.conv5 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
+        self.conv1 = Conv(in_channels, out_channels, kernel_size=1, stride=1, padding=0, act="leaky_relu")
+        self.conv2 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, act="leaky_relu")
+        self.conv3 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, act="leaky_relu")
+        self.conv4 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, act="leaky_relu")
+        self.conv5 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, act="leaky_relu")
 
 
     def forward(self, x):
@@ -25,13 +25,13 @@ class TopDownLayer(nn.Module):
 
 
 class TopDownLayerWithSPP(nn.Module):
-    def __init__(self, in_channels, out_channels, depthwise=False):
+    def __init__(self, in_channels, out_channels):
         super().__init__()
-        self.spp = SPPF(in_channels, out_channels, depthwise=depthwise)
-        self.conv1 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, depthwise=depthwise)
-        self.conv2 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
-        self.conv3 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, depthwise=depthwise)
-        self.conv4 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
+        self.spp = SPPF(in_channels, out_channels)
+        self.conv1 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, act="leaky_relu")
+        self.conv2 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, act="leaky_relu")
+        self.conv3 = Conv(out_channels, out_channels*2, kernel_size=3, stride=1, padding=1, act="leaky_relu")
+        self.conv4 = Conv(out_channels*2, out_channels, kernel_size=1, stride=1, padding=0, act="leaky_relu")
 
 
     def forward(self, x):
@@ -44,13 +44,13 @@ class TopDownLayerWithSPP(nn.Module):
 
 
 class FPN(nn.Module):
-    def __init__(self, feat_dims, depthwise=False):
+    def __init__(self, feat_dims):
         super().__init__()
-        self.topdown1 = TopDownLayer(in_channels=feat_dims[2], out_channels=feat_dims[2]//2, depthwise=depthwise)
-        self.conv1 = Conv(feat_dims[2]//2, feat_dims[2]//4, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
-        self.topdown2 = TopDownLayer(in_channels=feat_dims[1]+feat_dims[2]//4, out_channels=feat_dims[-2]//2, depthwise=depthwise)
-        self.conv2 = Conv(feat_dims[1]//2, feat_dims[1]//4, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
-        self.topdown3 = TopDownLayer(in_channels=feat_dims[0]+feat_dims[1]//4, out_channels=feat_dims[-3]//2, depthwise=depthwise)
+        self.topdown1 = TopDownLayer(in_channels=feat_dims[2], out_channels=feat_dims[2]//2)
+        self.conv1 = Conv(feat_dims[2]//2, feat_dims[2]//4, kernel_size=1, stride=1, padding=0, act="leaky_relu")
+        self.topdown2 = TopDownLayer(in_channels=feat_dims[1]+feat_dims[2]//4, out_channels=feat_dims[-2]//2)
+        self.conv2 = Conv(feat_dims[1]//2, feat_dims[1]//4, kernel_size=1, stride=1, padding=0, act="leaky_relu")
+        self.topdown3 = TopDownLayer(in_channels=feat_dims[0]+feat_dims[1]//4, out_channels=feat_dims[-3]//2)
         self.upsample = nn.Upsample(scale_factor=2)
 
 
@@ -66,13 +66,13 @@ class FPN(nn.Module):
 
 
 class FPNWithSPP(nn.Module):
-    def __init__(self, feat_dims, depthwise=False):
+    def __init__(self, feat_dims):
         super().__init__()
-        self.topdown1 = TopDownLayerWithSPP(in_channels=feat_dims[2], out_channels=feat_dims[2]//2, depthwise=depthwise)
-        self.conv1 = Conv(feat_dims[2]//2, feat_dims[2]//4, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
-        self.topdown2 = TopDownLayer(in_channels=feat_dims[1]+feat_dims[2]//4, out_channels=feat_dims[-2]//2, depthwise=depthwise)
-        self.conv2 = Conv(feat_dims[1]//2, feat_dims[1]//4, kernel_size=1, stride=1, padding=0, depthwise=depthwise)
-        self.topdown3 = TopDownLayer(in_channels=feat_dims[0]+feat_dims[1]//4, out_channels=feat_dims[-3]//2, depthwise=depthwise)
+        self.topdown1 = TopDownLayerWithSPP(in_channels=feat_dims[2], out_channels=feat_dims[2]//2)
+        self.conv1 = Conv(feat_dims[2]//2, feat_dims[2]//4, kernel_size=1, stride=1, padding=0, act="leaky_relu")
+        self.topdown2 = TopDownLayer(in_channels=feat_dims[1]+feat_dims[2]//4, out_channels=feat_dims[-2]//2)
+        self.conv2 = Conv(feat_dims[1]//2, feat_dims[1]//4, kernel_size=1, stride=1, padding=0, act="leaky_relu")
+        self.topdown3 = TopDownLayer(in_channels=feat_dims[0]+feat_dims[1]//4, out_channels=feat_dims[-3]//2)
         self.upsample = nn.Upsample(scale_factor=2)
 
 
@@ -93,9 +93,9 @@ if __name__ == "__main__":
     
     input_size = 320
     device = torch.device('cpu')
-    backbone, feat_dims = build_backbone(depthwise=False)
-    neck = FPN(feat_dims=feat_dims, depthwise=False)
-    neck = FPNWithSPP(feat_dims=feat_dims, depthwise=False)
+    backbone, feat_dims = build_backbone()
+    neck = FPN(feat_dims=feat_dims)
+    neck = FPNWithSPP(feat_dims=feat_dims)
 
     x = torch.randn(1, 3, input_size, input_size).to(device)
     ftrs = backbone(x)

@@ -190,7 +190,7 @@ if __name__ == "__main__":
     anchors = train_dataset.anchors
     num_classes = len(train_dataset.class_list)
     
-    model = YoloModel(input_size=input_size, num_classes=num_classes, anchors=anchors, model_type=model_type, depthwise=False).to(device)
+    model = YoloModel(input_size=input_size, num_classes=num_classes, anchors=anchors, model_type=model_type).to(device)
     criterion = YoloLoss(input_size=input_size, num_classes=num_classes, anchors=model.anchors)
     optimizer = optim.SGD(model.parameters(), lr=0.0001)
     optimizer.zero_grad()
