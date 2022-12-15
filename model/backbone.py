@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 
-class Darknet53(nn.Module):
+class DarkNet53(nn.Module):
     def __init__(self):
         super().__init__()
         self.conv1 = Conv(3, 32, kernel_size=3, padding=1, act="leaky_relu")
@@ -42,7 +42,7 @@ class Darknet53(nn.Module):
 
 def build_backbone():
     feat_dims = (256, 512, 1024)
-    model = Darknet53()
+    model = DarkNet53()
     ckpt = torch.load(ROOT / "weights" / "darknet53.pt")
     model.load_state_dict(ckpt["model_state"], strict=False)
     return model, feat_dims
