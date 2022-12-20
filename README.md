@@ -19,7 +19,7 @@ This is a repository for PyTorch implementation of YOLOv3 following the original
 
  - **Performance Table**
 
-| Model | Dataset | Train | Valid | Size<br><sup>(pixel) | mAP<br><sup>(@0.5:0.95) | mAP<br><sup>(@0.5) | Params<br><sup>(M) | FLOPS<br><sup>(B) |
+| Model | Dataset | Train | Valid | Size<br><sup>(pixel) | mAP<br><sup>(@0.5:0.95) | mAP<br><sup>(@0.5) | Params<br><sup>(M) | FLOPs<br><sup>(B) |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | 
 | YOLOv3<br><sup>(<u>Paper:page_with_curl:</u>)</br> | COCO | train2017 | val2017 | 320 | 28.2 | 51.5 | 61.95 | 38.97 |
 | YOLOv3<br><sup>(<u>Our:star:</u>)</br> | COCO | train2017 | val2017 | 320 | 29.9 | 50.8 | 61.98 | 39.15 |
