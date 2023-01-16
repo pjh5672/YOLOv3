@@ -26,14 +26,12 @@ This is a repository for PyTorch implementation of YOLOv3 following the original
 | YOLOv3<br><sup>(<u>Paper:page_with_curl:</u>)</br> | COCO | train2017 | val2017 | 416 | 31.0 | 55.3 | 61.95 | 65.86 |
 | YOLOv3<br><sup>(<u>Our:star:</u>)</br> | COCO | train2017 | val2017 | 416 | 33.9 | 54.9 | 61.98 | 66.17 |
 | YOLOv3<br><sup>(<u>Our:star:</u>)</br> | PASCAL-VOC | trainval2007+2012 | test2007 | 416 | 54.9 | 79.5 | 61.55 | 65.60 |
-| YOLOv3-multiscale<br><sup>(<u>Our:star:</u>)</br> | PASCAL-VOC | trainval2007+2012 | test2007 | 320~608 | 53.0 | 78.9 | 61.55 | 65.60 |
 
 
  - **Pretrained Model Weights Download**
 
-	- [DarkNet-53 Backbone](https://drive.google.com/file/d/1f8z9osppLNCf2jan8K8QJ2bNNOu0qrGZ/view?usp=share_link)
-	- [YOLOv3 trained on VOC (AP@0.50 - 79.5)](https://drive.google.com/file/d/1HtIapJ_o8ltJtg9FWf6Q7zfCkCmBepdC/view?usp=share_link)
-	- [YOLOv3-multiscale trained on VOC (AP@0.50 - 78.9)](https://drive.google.com/file/d/1r0CAuzjgpilzivTE5NnqLqr7bOx8kfLs/view?usp=share_link)
+	- [DarkNet-53 Backbone](https://drive.google.com/file/d/1pYc_UlnG2G4EnVwidR7T5XAu16KZj6YP/view?usp=share_link)
+	- [DarkNet-53-tiny Backbone]()
 
 
 ![result](./asset/result.jpg)
@@ -72,10 +70,10 @@ python kmedoids_anchor.py --exp my_test --data voc.yaml  --n_cluster 9
 
 
 #### Model Training 
- - You can train your own YOLOv3 model using Darknet-53 with anchor box from above step.
+ - You can train your own YOLOv3 model using Darknet-53 with anchor box from above step. If you wanna train YOLOv3 on your dataset from the scratch, add "--scratch" in training command like below.  
 
 ```python
-python train.py --exp my_test --data voc.yaml
+python train.py --exp my_test --data voc.yaml --multiscale(optional) --scratch(optional)
 ```
 
 
@@ -83,7 +81,7 @@ python train.py --exp my_test --data voc.yaml
  - You can compute detection metric via mean Average Precision(mAP) with IoU of 0.5, 0.75, 0.5:0.95. I follow the evaluation code with the reference on https://github.com/rafaelpadilla/Object-Detection-Metrics.
 
 ```python
-python val.py --exp my_test --data voc.yaml --ckpt_name best.pt
+python val.py --exp my_test --data voc.yaml --ckpt-name best.pt
 ```
 
 
