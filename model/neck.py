@@ -91,7 +91,7 @@ class FPNWithSPP(nn.Module):
 if __name__ == "__main__":
     from backbone import build_backbone
     
-    input_size = 320
+    input_size = 416
     device = torch.device('cpu')
     backbone, feat_dims = build_backbone()
     neck = FPN(feat_dims=feat_dims)

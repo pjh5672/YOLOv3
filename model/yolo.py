@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+import gdown
 import torch
 from torch import nn
 
@@ -13,6 +14,12 @@ if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
 
 
+model_urls = {
+    "yolov3-base": None,
+    "yolov3-spp": None,
+    "yolov3-tiny": None,
+}
+
 
 class YoloModel(nn.Module):
     def __init__(self, input_size, num_classes, anchors, model_type, pretrained=False):
@@ -24,7 +31,7 @@ class YoloModel(nn.Module):
         self.num_attributes = 1 + 4 + num_classes
         
         self.backbone, feat_dims = build_backbone()
-        if self.model_type == "default":
+        if self.model_type == "base":
             self.neck = FPN(feat_dims=feat_dims)
             self.head = YoloHead(input_size=input_size, in_channels=feat_dims, num_classes=num_classes, anchors=anchors)
         elif self.model_type == "spp":
@@ -34,7 +41,10 @@ class YoloModel(nn.Module):
             raise RuntimeError(f"got invalid argument for model_type: {self.model_type}.")
         
         if pretrained:
-            ckpt = torch.load(ROOT / "weights" / "yolov3.pt", map_location="cpu")
+            download_path = ROOT / "weights" / f"yolov3-{self.model_type}.pt"
+            if not download_path.is_file():
+                gdown.download(model_urls[f"yolov3-{self.model_type}"], str(download_path), quiet=False, fuzzy=True)
+            ckpt = torch.load(ROOT / "weights" / f"yolov3-{self.model_type}.pt", map_location="cpu")
             self.load_state_dict(ckpt["model_state"], strict=False)
 
 

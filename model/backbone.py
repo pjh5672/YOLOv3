@@ -1,6 +1,7 @@
 
 from pathlib import Path
 
+import gdown
 import torch
 from torch import nn
 
@@ -8,6 +9,11 @@ from element import Conv, ResBlock
 
 ROOT = Path(__file__).resolve().parents[1]
 
+
+model_urls = {
+    "darknet53-448": "https://drive.google.com/file/d/1pYc_UlnG2G4EnVwidR7T5XAu16KZj6YP/view?usp=share_link",
+    "darknet53-tiny-448": None,
+}
 
 
 class DarkNet53(nn.Module):
@@ -43,6 +49,9 @@ class DarkNet53(nn.Module):
 def build_backbone():
     feat_dims = (256, 512, 1024)
     model = DarkNet53()
+    download_path = ROOT / "weights" / "darknet53.pt"
+    if not download_path.is_file():
+        gdown.download(model_urls["darknet53-448"], str(download_path), quiet=False, fuzzy=True)
     ckpt = torch.load(ROOT / "weights" / "darknet53.pt")
     model.load_state_dict(ckpt["model_state"], strict=False)
     return model, feat_dims
@@ -50,7 +59,7 @@ def build_backbone():
 
 
 if __name__ == "__main__":
-    input_size = 320
+    input_size = 416
     device = torch.device('cpu')
     backbone, feat_dims = build_backbone()
 

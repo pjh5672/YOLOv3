@@ -177,7 +177,7 @@ if __name__ == "__main__":
     from model import YoloModel
 
     yaml_path = ROOT / 'data' / 'toy.yaml'
-    input_size = 320
+    input_size = 416
     batch_size = 1
     model_type = "default"
     device = torch.device('cuda')
