@@ -21,11 +21,9 @@ This is a repository for PyTorch implementation of YOLOv3 following the original
 
 | Model | Dataset | Train | Valid | Size<br><sup>(pixel) | mAP<br><sup>(@0.5:0.95) | mAP<br><sup>(@0.5) | Params<br><sup>(M) | FLOPs<br><sup>(B) |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | 
-| YOLOv3<br><sup>(<u>Paper:page_with_curl:</u>)</br> | COCO | train2017 | val2017 | 320 | 28.2 | 51.5 | 61.95 | 38.97 |
-| YOLOv3<br><sup>(<u>Our:star:</u>)</br> | COCO | train2017 | val2017 | 320 | 29.9 | 50.8 | 61.98 | 39.15 |
 | YOLOv3<br><sup>(<u>Paper:page_with_curl:</u>)</br> | COCO | train2017 | val2017 | 416 | 31.0 | 55.3 | 61.95 | 65.86 |
 | YOLOv3<br><sup>(<u>Our:star:</u>)</br> | COCO | train2017 | val2017 | 416 | 33.9 | 54.9 | 61.98 | 66.17 |
-| YOLOv3<br><sup>(<u>Our:star:</u>)</br> | PASCAL-VOC | trainval2007+2012 | test2007 | 416 | 54.9 | 79.5 | 61.55 | 65.60 |
+| YOLOv3<br><sup>(<u>Our:star:</u>)</br> | PASCAL-VOC | trainval2007+2012 | test2007 | 416 | 43.2 | 80.0 | 61.63 | 65.74 |
 
 
  - **Pretrained Model Weights Download**
