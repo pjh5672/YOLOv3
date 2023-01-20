@@ -41,7 +41,7 @@ This is a repository for PyTorch implementation of YOLOv3 following the original
  - You extract anchor box priors from all instances' boxes at first.
 
  ```python
-python kmedoids_anchor.py --exp my_test --data voc.yaml  --n_cluster 9
+python kmedoids_anchor.py --exp my_test --data voc.yaml  --n-cluster 9
  ```
 
 
