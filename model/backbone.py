@@ -11,8 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 model_urls = {
-    "darknet53-448": "https://drive.google.com/file/d/1pYc_UlnG2G4EnVwidR7T5XAu16KZj6YP/view?usp=share_link",
-    "darknet53-tiny-448": None,
+    "darknet53-448": "https://drive.google.com/file/d/1duXcafb2QgORHDO1w-7E1UusLfWInwgA/view?usp=drive_link",
+    "darknet53-tiny-448": "https://drive.google.com/file/d/13X39tcmNnYghvdBiosma7gsfwCxjsFQx/view?usp=drive_link",
 }
 
 
